@@ -16,5 +16,5 @@ public interface FileStore {
 
     FileObject save(FileObject fileObject);
 
-    void delete(UUID id);
+    void deleteById(UUID id);
 }

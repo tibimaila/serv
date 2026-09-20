@@ -16,5 +16,5 @@ public interface DriveStore {
 
     Drive save(Drive drive);
 
-    void delete(UUID id);
+    void deleteById(UUID id);
 }
