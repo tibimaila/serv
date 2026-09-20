@@ -16,6 +16,8 @@ public class Properties {
 
     public void setDataDir(String dataDir) { this.dataDir = dataDir; }
 
+    public String DataDir() { return dataDir; }
+
     public String StorageRoot() { return storageRoot; }
 
     public void setStorageRoot(String storageRoot) { this.storageRoot = storageRoot; }
