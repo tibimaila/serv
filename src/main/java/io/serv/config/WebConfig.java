@@ -7,9 +7,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private final Properties properties;
+    private final ServProperties properties;
 
-    public WebConfig(Properties properties) { this.properties = properties; }
+    public WebConfig(ServProperties properties) { this.properties = properties; }
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
