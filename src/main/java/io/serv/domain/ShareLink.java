@@ -5,9 +5,9 @@ import java.util.UUID;
 
 public class ShareLink {
     private final UUID id;
-    private UUID resourceId;
+    private final UUID resourceId;
     private String link;
-    private Instant createdBy;
+    private final Instant createdBy;
     private final String token;
     private final Instant expiresAt;
     private final boolean readOnly;
