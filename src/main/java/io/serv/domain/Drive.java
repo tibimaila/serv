@@ -5,9 +5,10 @@ import java.util.UUID;
 public class Drive {
 
     private final UUID id;
+    private final UUID ownerId;
+    private final String storagePath;
+
     private String name;
-    private UUID ownerId;
-    private String storagePath;
     private long sizeLimit;
     private boolean publicRead;
     private boolean publicList;
@@ -18,6 +19,8 @@ public class Drive {
         this.ownerId = ownerId;
         this.storagePath = storagePath;
         this.sizeLimit = sizeLimit;
+
+        // Drives are private by default.
         this.publicRead = false;
         this.publicList = false;
     }
@@ -25,9 +28,7 @@ public class Drive {
     public UUID id() { return id; }
     public void setName(String name) { this.name = name; }
     public String name() { return name; }
-    public void setOwnerId(UUID ownerId) { this.ownerId = ownerId; }
     public UUID ownerId() { return ownerId; }
-    public void setStoragePath(String storagePath) { this.storagePath = storagePath; }
     public String storagePath() { return storagePath; }
     public void setSizeLimit(long sizeLimit) { this.sizeLimit = sizeLimit; }
     public long sizeLimit() { return sizeLimit; }
