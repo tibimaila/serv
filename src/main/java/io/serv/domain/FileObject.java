@@ -5,9 +5,9 @@ import java.util.UUID;
 
 public class FileObject {
     private final UUID id;
-    private UUID driveId;
-    private UUID ownerId;    
-    private Instant createdAt;
+    private final UUID driveId;
+    private final UUID ownerId;    
+    private final Instant createdAt;
 
     private String name;
     private String path;
