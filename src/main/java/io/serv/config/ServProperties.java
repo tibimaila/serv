@@ -1,17 +1,36 @@
 package io.serv.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+
+@Validated
 @ConfigurationProperties(prefix = "serv")
 public class ServProperties {
+
+    private static final long DEFAULT_PRESIGN_TTL_SECONDS = 900;
+    private static final long DEFAULT_MULTIPART_THRESHOLD_BYTES = 100 * 1024 * 1024;
+    private static final long DEFAULT_PART_SIZE_BYTES = 10 * 1024 * 1024;
+    private static final long DEFAULT_MAX_DRIVE_SIZE_BYTES = 1_000_000_000L;
+
+    @NotBlank
     private String dataDir = "/tmp/data";
+    @NotBlank
     private String storageRoot = "/tmp/drive-data";
-    private long presignTtlSeconds = 900;
-    private long multipartThreshold = 104857600;
-    private long partSize = 10485760;
-    private long maxDriveSize = 1000000000;
+    @Min(1)
+    private long presignTtlSeconds = DEFAULT_PRESIGN_TTL_SECONDS;
+    @Min(1)
+    private long multipartThreshold = DEFAULT_MULTIPART_THRESHOLD_BYTES;
+    @Min(1)
+    private long partSize = DEFAULT_PART_SIZE_BYTES;
+    @Min(1)
+    private long maxDriveSize = DEFAULT_MAX_DRIVE_SIZE_BYTES;
+    @NotBlank
     private String rootEmail = "admin@serv.local";
-    private String rootPassword = "admin";
+    private String rootPassword;
+    @NotBlank
     private String corsOrigin = "http://localhost:5173";
 
     public void setDataDir(String dataDir) { this.dataDir = dataDir; }
