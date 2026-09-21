@@ -6,15 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UserStore {
-
-    Optional<User> findById(UUID userId);
+public interface UserStore extends Store<User, UUID> {
 
     Optional<User> findByEmail(String email);
-
-    List<User> findAll();
-
-    User save(User user);
-
-    void deleteById(UUID userId);
 }

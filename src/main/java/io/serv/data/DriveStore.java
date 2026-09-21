@@ -3,18 +3,9 @@ package io.serv.data;
 import io.serv.domain.Drive;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-public interface DriveStore {
-    
-    Optional<Drive> findById(UUID id);
-
-    List<Drive> findAll();
+public interface DriveStore extends Store<Drive, UUID> {
 
     List<Drive> findByOwnerId(UUID ownerId);
-
-    Drive save(Drive drive);
-
-    void deleteById(UUID id);
 }

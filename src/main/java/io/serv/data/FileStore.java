@@ -6,15 +6,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface FileStore {
-
-    Optional<FileObject> findById(UUID id);
+public interface FileStore extends Store<FileObject, UUID> {
 
     List<FileObject> findByDriveId(UUID driveId);
 
-    Optional<FileObject> findByDriveIdAndPath(UUID driveId, String path);
-
-    FileObject save(FileObject fileObject);
-
-    void deleteById(UUID id);
+    Optional<FileObject> findByDrivePath(UUID driveId, String path);
 }
