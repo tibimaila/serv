@@ -1,71 +1,64 @@
 package io.serv.config;
 
+import java.nio.file.Path;
+import java.time.Duration;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.util.unit.DataSize;
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.validation.constraints.Min;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Validated
 @ConfigurationProperties(prefix = "serv")
-public class ServProperties {
+public record ServProperties(
+    @NotNull @DefaultValue("./data") Path dataDir,
+    @Valid @DefaultValue Jwt jwt,
+    @Valid @DefaultValue Storage storage,
+    @Valid @DefaultValue Security security,
+    @Valid @DefaultValue Cors cors
+) {
+    // Derived directories based on the dataDir property
+    
+    public Path registryDir() { return dataDir.resolve("users"); }
+    public Path drivesDir() { return dataDir.resolve("drives"); }
+    public Path tmpDir() { return dataDir.resolve("tmp"); }
 
-    private static final long DEFAULT_PRESIGN_TTL_SECONDS = 900;
-    private static final long DEFAULT_MULTIPART_THRESHOLD_BYTES = 100 * 1024 * 1024;
-    private static final long DEFAULT_PART_SIZE_BYTES = 10 * 1024 * 1024;
-    private static final long DEFAULT_MAX_DRIVE_SIZE_BYTES = 1_000_000_000L;
 
-    @NotBlank
-    private String dataDir = "/tmp/data";
-    @NotBlank
-    private String storageRoot = "/tmp/drive-data";
-    @Min(1)
-    private long presignTtlSeconds = DEFAULT_PRESIGN_TTL_SECONDS;
-    @Min(1)
-    private long multipartThreshold = DEFAULT_MULTIPART_THRESHOLD_BYTES;
-    @Min(1)
-    private long partSize = DEFAULT_PART_SIZE_BYTES;
-    @Min(1)
-    private long maxDriveSize = DEFAULT_MAX_DRIVE_SIZE_BYTES;
-    @NotBlank
-    private String rootEmail = "admin@serv.local";
-    private String rootPassword;
-    @NotBlank
-    private String corsOrigin = "http://localhost:5173";
+    // Nested records for structured configuration properties
 
-    public void setDataDir(String dataDir) { this.dataDir = dataDir; }
+    public record Jwt(
+        /* HMAC signing key. Required: at least 32 characters (256 bits) */
+        @NotBlank @Size(min = 32, message = "serv.jwt.secret must be at least 32 characters") String secret,
+        @NotBlank @DefaultValue("serv") String issuer,
+        @NotNull @DefaultValue("15m") Duration accessTokenTtl,
+        @NotNull @DefaultValue("7d") Duration refreshTokenTtl
+    ) {}
 
-    public String DataDir() { return dataDir; }
+    public record Storage(
+        /* Default quota given to each new drive */ 
+        @NotNull @DefaultValue("10GB") DataSize defaultDriveQuota,
+        /* Multipart upload chunk size for large files */                
+        @NotNull @DefaultValue("8MB") DataSize chunkSize,
+        /* Time-to-live for stale multipart uploads (uploads that were not completed) */      
+        @NotNull @DefaultValue("24h") Duration staleUploadTtl    
+    ) {}
 
-    public String StorageRoot() { return storageRoot; }
+    public record Security(
+        /* PBKDF2-HMAC-SHA256 iterations */
+        @Min(100000) @DefaultValue("600000") int pbkdf2Iterations,
+        /* Maximum number of failed login attempts before account lockout */
+        @Min(1) @DefaultValue("5") int maxFailedLogins,
+        /* Duration for which an account is locked out after failed login attempts */
+        @NotNull @DefaultValue("5m") Duration lockoutDuration
+    ) {}
 
-    public void setStorageRoot(String storageRoot) { this.storageRoot = storageRoot; }
-
-    public long PresignTtlSeconds() { return presignTtlSeconds; }
-
-    public void setPresignTtlSeconds(long presignTtlSeconds) { this.presignTtlSeconds = presignTtlSeconds; }
-
-    public long MultipartThreshold() { return multipartThreshold; }
-
-    public void setMultipartThreshold(long multipartThreshold) { this.multipartThreshold = multipartThreshold; }
-
-    public long PartSize() { return partSize; }
-
-    public void setPartSize(long partSize) { this.partSize = partSize; }
-
-    public long MaxDriveSize() { return maxDriveSize; }
-
-    public void setMaxDriveSize(long maxDriveSize) { this.maxDriveSize = maxDriveSize; }
-
-    public String RootEmail() { return rootEmail; }
-
-    public void setRootEmail(String rootEmail) { this.rootEmail = rootEmail; }
-
-    public String RootPassword() { return rootPassword; }
-
-    public void setRootPassword(String rootPassword) { this.rootPassword = rootPassword; }
-
-    public String CorsOrigin() { return corsOrigin; }
-
-    public void setCorsOrigin(String corsOrigin) { this.corsOrigin = corsOrigin; }
+    public record Cors(
+        /* Origins allowed to call the API */
+        @NotNull @DefaultValue({"http://localhost:5173"}) List<String> allowedOrigins
+    ) {}
 }
