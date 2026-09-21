@@ -10,12 +10,13 @@ public class WebConfig implements WebMvcConfigurer {
     private final ServProperties properties;
 
     public WebConfig(ServProperties properties) { this.properties = properties; }
+    
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("*")
+                .allowedOrigins(properties.CorsOrigins())
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*");
-    }
+    }   
 
 }
