@@ -7,16 +7,18 @@ public class ShareLink {
     private final UUID id;
     private final UUID resourceId;
     private String link;
-    private final Instant createdBy;
+    private final UUID createdBy;
+    private final Instant createdAt;
     private final String token;
     private final Instant expiresAt;
     private final boolean readOnly;
 
-    public ShareLink(UUID id, UUID resourceId, String link, String token, Instant expiresAt, boolean readOnly) {
+    public ShareLink(UUID id, UUID resourceId, String link, UUID createdBy, String token, Instant expiresAt, boolean readOnly) {
         this.id = id;
         this.resourceId = resourceId;
         this.link = link;
-        this.createdBy = Instant.now();
+        this.createdBy = createdBy;
+        this.createdAt = Instant.now();
         this.token = token;
         this.expiresAt = expiresAt;
         this.readOnly = readOnly;
@@ -26,7 +28,8 @@ public class ShareLink {
     public UUID resourceId() { return resourceId; }
     public void setLink(String link) { this.link = link; }
     public String link() { return link; }
-    public Instant createdBy() { return createdBy; }
+    public UUID createdBy() { return createdBy; }
+    public Instant createdAt() { return createdAt; }
     public String token() { return token; }
     public Instant expiresAt() { return expiresAt; }
     public boolean isExpired() { return expiresAt != null && Instant.now().isAfter(expiresAt); }
