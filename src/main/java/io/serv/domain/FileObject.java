@@ -5,10 +5,10 @@ import java.util.UUID;
 
 public class FileObject {
     private final UUID id;
-    private final UUID driveId;
     private final UUID ownerId;    
     private final Instant createdAt;
 
+    private UUID driveId;
     private String name;
     private String path;
     private long size;
@@ -35,23 +35,22 @@ public class FileObject {
     }
     public String name() { return name; }
     public UUID driveId() { return driveId; }
-    public void setPath(String path) { 
-        this.path = path;
-        touch(); 
-    }   
     public String path() { return path; }
     public UUID ownerId() { return ownerId; }
-    public void setSize(long size) { 
-        this.size = size;
-        touch();
-    }
-    public void setContentType(String contentType) { 
-        this.contentType = contentType;
-        touch();
-    }
     public String contentType() { return contentType; }
     public Instant createdAt() { return createdAt; }
     public Instant updatedAt() { return updatedAt; }
+
+    public void rename(String name) {
+        this.name = name;
+        touch();
+    }
+
+    public void moveTo(UUID driveId, String path) {
+        this.driveId = driveId;
+        this.path = path;
+        touch();
+    }
 
     // Call touch() to update updatedAt  
     private void touch() { this.updatedAt = Instant.now(); }
