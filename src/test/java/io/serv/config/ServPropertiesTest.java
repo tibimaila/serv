@@ -1,5 +1,7 @@
 package io.serv.config;
 
+import java.nio.file.Path;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
@@ -11,52 +13,73 @@ public class ServPropertiesTest {
             .withUserConfiguration(TestConfig.class)
             .withPropertyValues(
                             "serv.data-dir=/tmp/data",
-                            "serv.storage-root=/tmp/drive-data",
-                            "serv.presign-ttl-seconds=900",
-                            "serv.multipart-threshold=104857600",
-                            "serv.part-size=10485760",
-                            "serv.max-drive-size=1000000000",
-                            "serv.root-email=admin@serv.local",
-                            "serv.root-password=admin",
-                            "serv.cors-origin=http://localhost:5173"
+                            "serv.jwt.secret=abcdefghijklmnopqrstuvwxyz123456",
+                            "serv.jwt.issuer=serv",
+                            "serv.jwt.access-token-ttl=15m",
+                            "serv.jwt.refresh-token-ttl=7d",
+
+                            "serv.storage.default-drive-quota=10GB",
+                            "serv.storage.chunk-size=8MB",
+                            "serv.storage.stale-upload-ttl=24h",
+
+                            "serv.security.pbkdf2-iterations=600000",
+                            "serv.security.max-failed-logins=5",
+                            "serv.security.lockout-duration=5m",
+
+                            "serv.cors.allowed-origins=http://localhost:5173"
             );
 
     @Test
     void testDefaultProperties() {
         contextRunner.run(context -> { ServProperties properties = context.getBean(ServProperties.class);
-            assertThat(properties.DataDir()).isEqualTo("/tmp/data");
-            assertThat(properties.StorageRoot()).isEqualTo("/tmp/drive-data");
-            assertThat(properties.PresignTtlSeconds()).isEqualTo(900);
-            assertThat(properties.MultipartThreshold()).isEqualTo(104857600);
-            assertThat(properties.PartSize()).isEqualTo(10485760);
-            assertThat(properties.MaxDriveSize()).isEqualTo(1000000000);
-            assertThat(properties.RootEmail()).isEqualTo("admin@serv.local");
-            assertThat(properties.RootPassword()).isEqualTo("admin");
-            assertThat(properties.CorsOrigin()).isEqualTo("http://localhost:5173");
+            assertThat(properties.dataDir()).isEqualTo(Path.of("/tmp/data"));
+            assertThat(properties.jwt().secret()).isEqualTo("abcdefghijklmnopqrstuvwxyz123456");
+            assertThat(properties.jwt().issuer()).isEqualTo("serv");
+            assertThat(properties.jwt().accessTokenTtl()).isEqualTo(java.time.Duration.ofMinutes(15));
+            assertThat(properties.jwt().refreshTokenTtl()).isEqualTo(java.time.Duration.ofDays(7));
+            assertThat(properties.storage().defaultDriveQuota()).isEqualTo(org.springframework.util.unit.DataSize.ofGigabytes(10));
+            assertThat(properties.storage().chunkSize()).isEqualTo(org.springframework.util.unit.DataSize.ofMegabytes(8));
+            assertThat(properties.storage().staleUploadTtl()).isEqualTo(java.time.Duration.ofHours(24));
+            assertThat(properties.security().pbkdf2Iterations()).isEqualTo(600000);
+            assertThat(properties.security().maxFailedLogins()).isEqualTo(5);
+            assertThat(properties.security().lockoutDuration()).isEqualTo(java.time.Duration.ofMinutes(5));
+            assertThat(properties.cors().allowedOrigins()).containsExactly("http://localhost:5173");
         });
     }
 
     @Test
     void testPropertiesBinding() {
         contextRunner.withPropertyValues(
-                "serv.data-dir=./data",
-                "serv.storage-root=./drive-data",
-                "serv.presign-ttl-seconds=1800",
-                "serv.multipart-threshold=209715200",
-                "serv.part-size=20971520",
-                "serv.max-drive-size=2000000000",
-                "serv.root-email=user@serv.local",
-                "serv.root-password=user"
+                        "serv.data-dir=./data",
+
+                        "serv.jwt.secret=12345678901234567890123456789012",
+                        "serv.jwt.issuer=test-serv",
+                        "serv.jwt.access-token-ttl=30m",
+                        "serv.jwt.refresh-token-ttl=14d",
+
+                        "serv.storage.default-drive-quota=20GB",
+                        "serv.storage.chunk-size=16MB",
+                        "serv.storage.stale-upload-ttl=48h",
+
+                        "serv.security.pbkdf2-iterations=700000",
+                        "serv.security.max-failed-logins=10",
+                        "serv.security.lockout-duration=10m",
+
+                        "serv.cors.allowed-origins=http://localhost:3000"
         ).run(context -> {
             ServProperties properties = context.getBean(ServProperties.class);
-            assertThat(properties.DataDir()).isEqualTo("./data");
-            assertThat(properties.StorageRoot()).isEqualTo("./drive-data");
-            assertThat(properties.PresignTtlSeconds()).isEqualTo(1800);
-            assertThat(properties.MultipartThreshold()).isEqualTo(209715200);
-            assertThat(properties.PartSize()).isEqualTo(20971520);
-            assertThat(properties.MaxDriveSize()).isEqualTo(2000000000);
-            assertThat(properties.RootEmail()).isEqualTo("user@serv.local");
-            assertThat(properties.RootPassword()).isEqualTo("user");
+            assertThat(properties.dataDir()).isEqualTo(Path.of("data"));
+            assertThat(properties.jwt().secret()).isEqualTo("12345678901234567890123456789012");
+            assertThat(properties.jwt().issuer()).isEqualTo("test-serv");
+            assertThat(properties.jwt().accessTokenTtl()).isEqualTo(java.time.Duration.ofMinutes(30));
+            assertThat(properties.jwt().refreshTokenTtl()).isEqualTo(java.time.Duration.ofDays(14));
+            assertThat(properties.storage().defaultDriveQuota()).isEqualTo(org.springframework.util.unit.DataSize.ofGigabytes(20));
+            assertThat(properties.storage().chunkSize()).isEqualTo(org.springframework.util.unit.DataSize.ofMegabytes(16));
+            assertThat(properties.storage().staleUploadTtl()).isEqualTo(java.time.Duration.ofHours(48));
+            assertThat(properties.security().pbkdf2Iterations()).isEqualTo(700000);
+            assertThat(properties.security().maxFailedLogins()).isEqualTo(10);
+            assertThat(properties.security().lockoutDuration()).isEqualTo(java.time.Duration.ofMinutes(10));
+            assertThat(properties.cors().allowedOrigins()).containsExactly("http://localhost:3000");
         });
     }
 
