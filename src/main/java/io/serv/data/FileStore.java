@@ -10,5 +10,5 @@ public interface FileStore extends Store<FileObject, UUID> {
 
     List<FileObject> findByDriveId(UUID driveId);
 
-    Optional<FileObject> findByDrivePath(UUID driveId, String path);
+    Optional<FileObject> findByFilePath(UUID driveId, String path);
 }
