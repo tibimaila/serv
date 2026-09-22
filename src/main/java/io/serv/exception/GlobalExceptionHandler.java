@@ -33,11 +33,11 @@ public class GlobalExceptionHandler {
  */
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ErrorResponse> handleApiException(ApiException e) {
-        if (e.getStatus().is5xxServerError()) {
+        if (e.status().is5xxServerError()) {
             log.error("Unhandled API exception", e);
         }
-        return ResponseEntity.status(e.getStatus())
-                .body(ErrorResponse.of(e.getStatus().value(), e.getCode(), e.getMessage()));
+        return ResponseEntity.status(e.status())
+                .body(ErrorResponse.of(e.status().value(), e.statusCode(), e.getMessage()));
     }
 
 /** Handles validation errors produced when a request body fails
