@@ -1,15 +1,26 @@
-package io.serv.repository;
+    package io.serv.repository;
 
-import java.util.List; 
-import java.util.Optional;
+    import java.util.List; 
+    import java.util.Optional;
 
-public interface Store<T, ID> {
-    
-    Optional<T> findById(ID id);
+    public interface Repository<T, ID> {
+        
+        Optional<T> findById(ID id);
 
-    List<T> findAll();
+        /**
+        * Returns all entities managed by the repository.
+        *
+        * @return a list containing all stored entities
+        */
+        List<T> findAll();
 
-    T save(T entity);
+        /**
+        * Saves an entity.
+        *
+        * @param entity the entity to save
+        * @return the saved entity
+        */
+        T save(T entity);
 
-    void deleteById(ID id);
-}
+        void deleteById(ID id);
+    }

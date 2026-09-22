@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UserStore extends Store<User, UUID> {
-
+public interface UserRepository extends Repository<User, UUID> {
     Optional<User> findByEmail(String email);
+    
     boolean existsByEmail(String email);
 }
