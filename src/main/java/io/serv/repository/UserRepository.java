@@ -1,6 +1,6 @@
 package io.serv.repository;
 
-import io.serv.domain.User;
+import io.serv.domain.user.User;
 
 import java.util.List;
 import java.util.Optional;

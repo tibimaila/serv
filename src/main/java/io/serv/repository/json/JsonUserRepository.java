@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public class JsonUserRepository implements UserRepository {
 
     private final ObjectMapper objectMapper;
@@ -77,17 +78,17 @@ public class JsonUserRepository implements UserRepository {
     }
 
     @Override
-    public List<User> findAll() { return List.copyOf(loadUsers()); }
+    public List<User> findAll() { return List.copyOf(usersById.values()); }
 
     @Override
-    public Optional<io.serv.domain.user.User> findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         if (email == null || email.isBlank()) { return Optional.empty(); }
         
         return usersById.values().stream()
         .filter(user -> user.email().equalsIgnoreCase(email))
         .findFirst();
     }
-    
+
     /**
      * Checks whether a user exists with the specified email address.
      *
@@ -99,7 +100,7 @@ public class JsonUserRepository implements UserRepository {
 
     @Override 
     public User save(User user) {
-        if (user == null) { return null; }
+        if (user == null) { throw new IllegalArgumentException("User must not be null."); }
 
         usersById.put(user.id().toString(), user);
         writeUsersToFile();
