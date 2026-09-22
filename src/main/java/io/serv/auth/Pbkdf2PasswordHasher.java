@@ -1,5 +1,8 @@
 package io.serv.auth;
 
+import io.serv.config.ServProperties;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
+
 public class Pbkdf2PasswordHasher implements PasswordHasher {
 
     private static final int SALT_LENGTH_BYTES = 16;
