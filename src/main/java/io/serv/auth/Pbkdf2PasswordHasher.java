@@ -12,6 +12,7 @@ public class Pbkdf2PasswordHasher implements PasswordHasher {
 
     public Pbkdf2PasswordHasher(ServProperties props) {
         this.encoder = new Pbkdf2PasswordEncoder(
+                props.jwt().secret(),
                 SALT_LENGTH_BYTES,
                 props.security().pbkdf2Iterations(),
                 HASH_WIDTH_BITS
