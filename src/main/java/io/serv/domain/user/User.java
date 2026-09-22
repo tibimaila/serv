@@ -20,6 +20,10 @@ public record User(
 ) {
 
     public User{
+        if (id == null) { throw new IllegalArgumentException("User ID is required."); }
+        if (email == null) { throw new IllegalArgumentException("User email is required."); }
+        if (passwordHash == null) { throw new IllegalArgumentException("User password hash is required."); }
+
         roles = roles == null ? Set.of() : Set.copyOf(roles);
     }
 
