@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ErrorResponse.of(status(HttpStatus.UNAUTHORIZED).value(), "UNAUTHORIZED", "Invalid email or password."));
+                .body(ErrorResponse.of(HttpStatus.UNAUTHORIZED.value(), "UNAUTHORIZED", "Invalid email or password."));
     }
 
 /** Handles access denied errors.
@@ -86,7 +86,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ErrorResponse.of(status(HttpStatus.FORBIDDEN).value(), "FORBIDDEN", "Access denied."));
+                .body(ErrorResponse.of(HttpStatus.FORBIDDEN.value(), "FORBIDDEN", "Access denied."));
     }
 
 /** Handles upload size exceed errors.
@@ -97,7 +97,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> handleMaxUpload(MaxUploadSizeExceededException e) {
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
-                .body(ErrorResponse.of(status(HttpStatus.PAYLOAD_TOO_LARGE).value(), "PAYLOAD_TOO_LARGE", "The uploaded file exceeds the maximum allowed size."));
+                .body(ErrorResponse.of(HttpStatus.PAYLOAD_TOO_LARGE.value(), "PAYLOAD_TOO_LARGE", "The uploaded file exceeds the maximum allowed size."));
     }
 
 /** Handles unexpected exceptions that are not explicitly handled 

@@ -1,10 +1,8 @@
-package io.serv.domain;
+package io.serv.domain.user;
 
-import io.serv.domain.user.Role;
-
-import java.util.UUID;
 import java.time.Instant;
 import java.util.Set;
+import java.util.UUID;
 
 public record User(
         UUID id,
@@ -19,7 +17,7 @@ public record User(
         Instant createdAt
 ) {
 
-    public User{
+    public User {
         if (id == null) { throw new IllegalArgumentException("User ID is required."); }
         if (email == null) { throw new IllegalArgumentException("User email is required."); }
         if (passwordHash == null) { throw new IllegalArgumentException("User password hash is required."); }
@@ -28,7 +26,7 @@ public record User(
     }
 
     public static User create(UUID id, String email, String passwordHash, String displayName) {
-        return new User(UUID.randomUUID(), email, passwordHash, displayName, Set.of(Role.USER), false, null, 0, null, Instant.now());
+        return new User(id, email, passwordHash, displayName, Set.of(Role.USER), false, null, 0, null, Instant.now());
     }
 
     public boolean isLocked() {
