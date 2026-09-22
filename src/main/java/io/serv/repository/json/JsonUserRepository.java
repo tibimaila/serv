@@ -26,7 +26,7 @@ public class JsonUserRepository implements UserRepository {
     private final ObjectMapper objectMapper;
     private final Path usersFile;
 
-    private Map<String, User> usersById = new LinkedHashMap<>();
+    private Map<UUID, User> usersById = new LinkedHashMap<>();
 
     /**
     * Creates a JSON user repository.
@@ -61,7 +61,7 @@ public class JsonUserRepository implements UserRepository {
                 usersById = new LinkedHashMap<>();
 
                 for (User user : users) {
-                    usersById.put(user.id().toString(), user);
+                    usersById.put(user.id(), user);
                 }
 
                 } catch (IOException e) {
@@ -74,7 +74,7 @@ public class JsonUserRepository implements UserRepository {
     public Optional<User> findById(UUID id) {
         if (id == null) { return Optional.empty(); }
         
-        return Optional.ofNullable(usersById.get(id.toString()));
+        return Optional.ofNullable(usersById.get(id));
     }
 
     @Override
@@ -102,7 +102,7 @@ public class JsonUserRepository implements UserRepository {
     public User save(User user) {
         if (user == null) { throw new IllegalArgumentException("User must not be null."); }
 
-        usersById.put(user.id().toString(), user);
+        usersById.put(user.id(), user);
         writeUsersToFile();
 
         return user;
@@ -112,7 +112,7 @@ public class JsonUserRepository implements UserRepository {
     public void deleteById(UUID id) {
         if (id == null) { return; }
 
-        if (usersById.remove(id.toString()) != null) {
+        if (usersById.remove(id) != null) {
             writeUsersToFile();
         }
     }
