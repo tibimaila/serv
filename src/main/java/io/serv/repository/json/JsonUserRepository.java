@@ -87,7 +87,13 @@ public class JsonUserRepository implements UserRepository {
         .filter(user -> user.email().equalsIgnoreCase(email))
         .findFirst();
     }
-
+    
+    /**
+     * Checks whether a user exists with the specified email address.
+     *
+     * @param email the user's email address
+     * @return true when a matching user exists
+     */
     @Override 
     public boolean existsByEmail(String email) {return findByEmail(email).isPresent(); }
 
