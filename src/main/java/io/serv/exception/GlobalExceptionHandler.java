@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ErrorResponse> handleApiException(ApiException e) {
         if (e.status().is5xxServerError()) {
-            log.error("Unhandled API exception", e);
+            log.error("API exception: {}", e.getMessage(), e);
         }
         return ResponseEntity.status(e.status())
                 .body(ErrorResponse.of(e.status().value(), e.statusCode(), e.getMessage()));
@@ -51,8 +51,8 @@ public class GlobalExceptionHandler {
         List<ErrorResponse.FieldError> fieldErrors = e.getBindingResult().getFieldErrors().stream()
                 .map(fe -> new ErrorResponse.FieldError(fe.getField(), messageOf(fe)))
                 .toList();
-        return ResponseEntity.badRequest()
-                .body(ErrorResponse.of(400, "VALIDATION_ERROR", "Request validation failed", fieldErrors));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), "VALIDATION_ERROR", "Request validation failed.", fieldErrors));
     }
 
 /** Handles validation errors produced by method or parameter
@@ -63,8 +63,8 @@ public class GlobalExceptionHandler {
 */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException e) {
-        return ResponseEntity.badRequest()
-                .body(ErrorResponse.of(400, "VALIDATION_ERROR", e.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), "VALIDATION_ERROR", e.getMessage()));
     }
 
 /** Handles failed authentication caused by invalid credentials.
@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ErrorResponse.of(401, "UNAUTHORIZED", "Invalid credentials"));
+                .body(ErrorResponse.of(status(HttpStatus.UNAUTHORIZED).value(), "UNAUTHORIZED", "Invalid email or password."));
     }
 
 /** Handles access denied errors.
@@ -86,7 +86,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ErrorResponse.of(403, "FORBIDDEN", "Access denied"));
+                .body(ErrorResponse.of(status(HttpStatus.FORBIDDEN).value(), "FORBIDDEN", "Access denied."));
     }
 
 /** Handles upload size exceed errors.
@@ -97,7 +97,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> handleMaxUpload(MaxUploadSizeExceededException e) {
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
-                .body(ErrorResponse.of(413, "PAYLOAD_TOO_LARGE", "Upload exceeds the maximum allowed size"));
+                .body(ErrorResponse.of(status(HttpStatus.PAYLOAD_TOO_LARGE).value(), "PAYLOAD_TOO_LARGE", "The uploaded file exceeds the maximum allowed size."));
     }
 
 /** Handles unexpected exceptions that are not explicitly handled 
@@ -109,9 +109,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpected(Exception e) {
-        log.error("Unhandled exception", e);
-        return ResponseEntity.internalServerError()
-                .body(ErrorResponse.of(500, "INTERNAL_ERROR", "Something went wrong"));
+        log.error("Unexpected server error", e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "INTERNAL_ERROR", "An unexpected error occurred. Please try again later."));
     }
 
 /** Returns the validation message for a field error.
@@ -121,8 +121,7 @@ public class GlobalExceptionHandler {
  * when no message is available 
  */
     private static String messageOf(FieldError fe) {
-        return fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "invalid value";
+        return fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "Invalid value.";
     }
-
 
 }
