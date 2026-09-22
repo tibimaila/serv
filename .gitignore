@@ -1,9 +1,30 @@
-# IntelliJ IDEA
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
 .idea/
 *.iml
-
-# Visual Studio Code
 .vscode/
+.classpath
+.project
+.settings/
 
-# Maven build output
-target/
+# Java
+*.class
+
+# Runtime data
+data/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
