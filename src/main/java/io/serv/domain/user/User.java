@@ -25,7 +25,7 @@ public record User(
         roles = roles == null ? Set.of() : Set.copyOf(roles);
     }
 
-    public static User create(UUID id, String email, String passwordHash, String displayName) {
+    public static User newUser(UUID id, String email, String passwordHash, String displayName) {
         return new User(id, email, passwordHash, displayName, Set.of(Role.USER), false, null, 0, null, Instant.now());
     }
 
