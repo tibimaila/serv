@@ -1,5 +1,7 @@
 package io.serv.domain;
 
+import io.serv.domain.user.Role;
+
 import java.util.UUID;
 import java.time.Instant;
 import java.util.Set;
