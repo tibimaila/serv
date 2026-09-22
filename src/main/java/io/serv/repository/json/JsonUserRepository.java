@@ -12,6 +12,7 @@ import io.serv.repository.UserRepository;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -124,7 +125,7 @@ public class JsonUserRepository implements UserRepository {
                 throw new IllegalStateException("Failed to save users to JSON file: " + usersFile, e);
             }
 
-            Files.move(tmp, usersFile);
+            Files.move(tmp, usersFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to save users to JSON file: " + usersFile, e);
         }
@@ -132,4 +133,3 @@ public class JsonUserRepository implements UserRepository {
 
 
 }
-        
