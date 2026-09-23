@@ -38,7 +38,8 @@ public record ServProperties(
         @NotBlank @Size(min = 32, message = "serv.jwt.secret must be at least 32 characters") String secret,
         @NotBlank @DefaultValue("serv") String issuer,
         @NotNull @DefaultValue("15m") Duration accessTokenTtl,
-        @NotNull @DefaultValue("7d") Duration refreshTokenTtl
+        @NotNull @DefaultValue("7d") Duration refreshTokenTtl,
+        @NotNull @DefaultValue("3m") Duration mfaPendingTtl
     ) {}
 
     public record Storage(
@@ -51,6 +52,7 @@ public record ServProperties(
     ) {}
 
     public record Security(
+        @NotBlank @Size(min = 32, message = "serv.security.password-pepper must be at least 32 characters") String passwordPepper,
         /* PBKDF2-HMAC-SHA256 iterations */
         @Min(100000) @DefaultValue("600000") int pbkdf2Iterations,
         /* Maximum number of failed login attempts before account lockout */
